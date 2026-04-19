@@ -132,9 +132,10 @@
   .logo-wrap {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 12px !important;
     text-decoration: none;
     color: var(--ink);
+    flex-shrink: 0;
   }
 
   .logo-symbol {
@@ -258,6 +259,60 @@
     opacity: 0.5;
   }
 
+  /* lang-toggle-top: place directly in nav bar next to the logo */
+  .lang-toggle-top {
+    margin-left: auto;   /* push to right side, but hamburger sits further right */
+    padding-left: 0;
+    border-left: none;
+  }
+  /* On desktop, lang-toggle inside nav-links is hidden; top one is shown */
+  .lang-toggle-top { display: inline-flex; }
+  @media (min-width: 961px) {
+    /* On desktop, push lang-toggle-top just before nav-links, not to the far right */
+    .lang-toggle-top {
+      order: 2;
+      margin-left: 0;
+      margin-right: 24px;
+      padding-left: 0;
+      border-left: none;
+      border-right: 1px solid var(--line);
+      padding-right: 22px;
+    }
+    .nav-links { order: 3; }
+    .logo-wrap { order: 1; margin-right: auto; }
+  }
+
+  /* Hamburger button — hidden on desktop */
+  .nav-hamburger {
+    display: none;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 110;
+    margin-left: auto;
+  }
+  .nav-hamburger span {
+    display: block;
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 1.5px;
+    background: var(--ink);
+    transition: transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.2s;
+  }
+  .nav-hamburger span:nth-child(1) { top: 13px; }
+  .nav-hamburger span:nth-child(2) { top: 21px; }
+  nav.menu-open .nav-hamburger span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  nav.menu-open .nav-hamburger span:nth-child(2) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
   /* ============ HERO ============ */
   .hero {
     min-height: 100vh;
@@ -339,7 +394,7 @@
     line-height: 1.6;
     color: var(--ink-soft);
     max-width: 500px;
-    margin-bottom: 52px;
+    margin-bottom: 0;
     letter-spacing: -0.005em;
     opacity: 0;
     animation: fadeUp 1.0s 0.45s forwards;
@@ -386,20 +441,22 @@
     overflow: visible;
   }
 
-  /* Orbital ring — always slowly rotating */
+  /* Orbital ring — always rotating */
   .orbit {
     fill: none;
     stroke: var(--purple-line);
     stroke-width: 0.8;
     stroke-dasharray: 1 5;
     transform-origin: center;
-    animation: orbitSpin 180s linear infinite;
+    animation: orbitSpin 60s linear infinite;
   }
   .orbit.outer {
-    animation-duration: 240s;
+    animation-duration: 90s;
     animation-direction: reverse;
     opacity: 0.6;
   }
+  .node-canvas:hover .orbit { animation-duration: 20s; }
+  .node-canvas:hover .orbit.outer { animation-duration: 30s; }
 
   /* Nodes */
   .node-group {
@@ -422,43 +479,42 @@
     font-weight: 500;
   }
 
-  /* Connection lines — static by default, appear on active */
+  /* Connection lines — always visible, subtle */
   .edge {
     stroke: var(--purple);
     stroke-width: 1;
     fill: none;
-    opacity: 0;
+    opacity: 0.35;
     stroke-dasharray: 3 4;
     transition: opacity 0.8s;
   }
 
-  /* Pulse dots — hidden by default */
+  /* Pulse dots — always travelling */
   .pulse-dot {
     fill: var(--purple);
-    opacity: 0;
-    transition: opacity 0.6s;
-  }
-
-  /* Active state — triggered on hover or mobile scroll */
-  .node-canvas.active .edge {
-    opacity: 0.4;
-  }
-  .node-canvas.active .pulse-dot {
     opacity: 1;
   }
-  .node-canvas.active .node-float-l {
-    animation: floatSlow 8s ease-in-out infinite;
+
+  /* Node floating — always active */
+  .node-float-l {
+    animation: floatSlow 6s ease-in-out infinite;
   }
-  .node-canvas.active .node-float-m {
-    animation: floatSlow 7s ease-in-out infinite 1.5s;
+  .node-float-m {
+    animation: floatSlow 5.2s ease-in-out infinite 1.2s;
   }
-  .node-canvas.active .node-float-s {
-    animation: floatSlow 6s ease-in-out infinite 3s;
+  .node-float-s {
+    animation: floatSlow 4.5s ease-in-out infinite 2.4s;
   }
+
+  /* On hover (desktop): intensify */
+  .node-canvas:hover .edge { opacity: 0.6; }
+  .node-canvas:hover .node-float-l { animation-duration: 3s; }
+  .node-canvas:hover .node-float-m { animation-duration: 2.6s; }
+  .node-canvas:hover .node-float-s { animation-duration: 2.2s; }
 
   @keyframes floatSlow {
     0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(0, -6px); }
+    50% { transform: translate(0, -8px); }
   }
 
   /* ============ SECTION COMMON ============ */
@@ -519,6 +575,7 @@
     padding: 52px 40px;
     position: relative;
     transition: background 0.4s ease;
+    min-width: 0;
   }
   .layer:hover { background: var(--cream-warm); }
 
@@ -614,6 +671,7 @@
   .principle {
     border-top: 1px solid rgba(247, 244, 236, 0.16);
     padding-top: 32px;
+    min-width: 0;
   }
 
   .principle-num {
@@ -761,6 +819,42 @@
     line-height: 1.9;
     text-transform: uppercase;
   }
+
+  .footer-facts {
+    display: flex;
+    gap: 28px;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .footer-fact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+  .footer-fact-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .footer-fact strong {
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    text-transform: none;
+  }
+  html[lang="ja"] .footer-fact strong {
+    font-family: 'Noto Serif JP', 'DM Serif Display', serif;
+    font-weight: 500;
+  }
   .footer-meta a {
     color: var(--ink-soft);
     text-decoration: none;
@@ -813,52 +907,109 @@
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 960px) {
-    nav { padding: 18px 22px; }
-    nav.scrolled { padding: 14px 22px; }
-    .logo-symbol { width: 26px; height: 26px; }
-    .logo-text { font-size: 19px; }
-    .nav-links { gap: 16px; font-size: 12.5px; }
-    .lang-toggle {
-      margin-left: 12px;
-      padding-left: 12px;
-      font-size: 10.5px;
-      gap: 6px;
+    nav {
+      padding: 16px 22px;
+      gap: 12px;
     }
+    nav.scrolled { padding: 12px 22px; }
+    .logo-symbol { width: 32px; height: 32px; }
+    .logo-text { font-size: 24px; }
+
+    /* Show Hamburger */
+    .nav-hamburger { display: block; margin-left: 0; }
+
+    /* Top-level lang toggle: keep visible on mobile, to the left of hamburger */
+    .lang-toggle-top {
+      margin-left: auto;
+      margin-right: 4px;
+      font-size: 12px;
+      padding-left: 0;
+      border-left: none;
+    }
+    .lang-toggle-top button { padding: 6px 4px; }
+
+    /* Hide the duplicate lang-toggle inside nav-links (if any) */
+    .nav-links .lang-toggle:not(.lang-toggle-top) { display: none; }
+
+    /* Mobile: nav-links becomes a slide-down panel */
+    .nav-links {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--cream);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      padding: 80px 28px 32px;
+      border-bottom: 1px solid var(--line);
+      transform: translateY(-105%);
+      transition: transform 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+      box-shadow: 0 8px 40px rgba(14, 14, 20, 0.08);
+      z-index: 105;
+    }
+    nav.menu-open .nav-links {
+      transform: translateY(0);
+    }
+    .nav-links a {
+      font-size: 18px;
+      padding: 18px 0;
+      width: 100%;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-links a::after { display: none; }
+    .nav-links a.dimmed { font-size: 18px; }
 
     .hero {
       grid-template-columns: 1fr;
-      gap: 36px;
-      padding: 88px 22px 56px;
+      gap: 28px;
+      padding: 88px 22px 32px;
       min-height: auto;
     }
     .hero-label {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     h1 {
-      font-size: clamp(48px, 11vw, 72px);
+      font-size: clamp(40px, 9vw, 60px);
       margin-bottom: 28px;
+      line-height: 1.08;
+    }
+    /* Prevent Japanese+Latin mixed text from overflowing */
+    html[lang="ja"] h1 {
+      font-size: clamp(36px, 8.5vw, 54px);
+      line-height: 1.3;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
     .hero-sub {
       font-size: 16px;
-      margin-bottom: 36px;
-    }
-    .hero-meta {
-      gap: 40px;
-      flex-wrap: wrap;
+      margin-bottom: 0;
     }
     .node-canvas {
-      max-width: 280px;
-      margin: 12px auto 0;
+      max-width: 300px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    /* Reduce label letter-spacing on mobile so text isn't cramped */
+    .node-layer-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
     }
 
     .section, .careers {
       padding: 96px 22px;
     }
     .principles {
-      padding: 112px 22px;
+      padding: 96px 22px;
     }
+    .principles::before { right: -30%; width: 120%; filter: blur(120px); }
+    .principles::after { left: -30%; width: 100%; filter: blur(120px); }
     .section-title {
       margin-bottom: 60px;
+    }
+    html[lang="ja"] .section-title {
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
     .layers {
       grid-template-columns: 1fr;
@@ -866,9 +1017,60 @@
     .layer {
       padding: 40px 28px;
     }
+    .layer-title {
+      font-size: 22px;
+      line-height: 1.3;
+    }
+    html[lang="ja"] .layer-title {
+      font-size: 21px;
+      line-height: 1.5;
+    }
+    .layer-desc {
+      font-size: 14px;
+    }
+    .principles .section-title {
+      font-size: clamp(30px, 8.5vw, 44px);
+      line-height: 1.2;
+    }
+    html[lang="ja"] .principles .section-title {
+      font-size: clamp(28px, 8vw, 40px);
+      line-height: 1.35;
+    }
+    .principle-title {
+      font-size: 20px;
+      line-height: 1.35;
+    }
+    html[lang="ja"] .principle-title {
+      font-size: 19px;
+      line-height: 1.45;
+    }
+    .principle-body {
+      font-size: 14px;
+      line-height: 1.7;
+    }
     .principle-list {
       grid-template-columns: 1fr;
-      gap: 52px;
+      gap: 44px;
+      margin-top: 48px;
+    }
+    html[lang="ja"] .principle-title,
+    html[lang="ja"] .layer-title {
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      line-break: loose;
+    }
+    html[lang="ja"] .principle-body,
+    html[lang="ja"] .layer-desc,
+    html[lang="ja"] .careers-body,
+    html[lang="ja"] .hero-sub {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      line-break: loose;
+    }
+    /* On mobile, disable forced <br> inside layer/principle titles so lines wrap naturally */
+    html[lang="ja"] .layer-title .lang-ja-block br,
+    html[lang="ja"] .principles .section-title .lang-ja-block br {
+      display: none;
     }
     .careers {
       grid-template-columns: 1fr;
@@ -888,6 +1090,13 @@
     }
     .footer-meta {
       text-align: left;
+    }
+    .footer-facts {
+      justify-content: flex-start;
+      gap: 32px;
+    }
+    .footer-fact {
+      align-items: flex-start;
     }
     .footer-copy {
       flex-direction: column;
@@ -929,15 +1138,19 @@
     </svg>
     <span class="logo-text">Alzent</span>
   </a>
-  <div class="nav-links">
-    <a href="#architecture">Architecture</a>
+  <span class="lang-toggle lang-toggle-top">
+    <button id="langEn" class="active" onclick="setLang('en')">EN</button>
+    <span class="sep">/</span>
+    <button id="langJa" onclick="setLang('ja')">JP</button>
+  </span>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="#architecture" onclick="closeMenu()">Architecture</a>
     <a href="#" class="dimmed" aria-disabled="true">Products<span class="dot"></span></a>
-    <a href="#careers">Careers</a>
-    <span class="lang-toggle">
-      <button id="langEn" class="active" onclick="setLang('en')">EN</button>
-      <span class="sep">/</span>
-      <button id="langJa" onclick="setLang('ja')">JP</button>
-    </span>
+    <a href="#careers" onclick="closeMenu()">Careers</a>
   </div>
 </nav>
 
@@ -946,11 +1159,11 @@
   <div class="hero-content">
     <div class="hero-label">
       <span class="lang-en">AI Agent Infrastructure</span>
-      <span class="lang-ja">AIエージェント基盤</span>
+      <span class="lang-ja">AIエージェント基盤構築</span>
     </div>
     <h1>
       <span class="lang-en-block">We design the agents.<br>We build what <span class="accent">runs them</span>.</span>
-      <span class="lang-ja-block"><span class="accent">実効性のあるAIサービス</span>を。</span>
+      <span class="lang-ja-block"><span class="accent">実効性のある</span><br>AIサービスを。</span>
     </h1>
     <p class="hero-sub">
       <span class="lang-en">
@@ -962,10 +1175,6 @@
         ワンストップで提供します。
       </span>
     </p>
-    <div class="hero-meta">
-      <span>Headquarters<strong><span class="lang-en">Tokyo</span><span class="lang-ja">東京</span></strong></span>
-      <span>Founded<strong>2026</strong></span>
-    </div>
   </div>
 
   <!-- ============ LIVE LOGO — Hero canvas ============ -->
@@ -1004,15 +1213,15 @@
         <text class="node-layer-label" x="150" y="425" text-anchor="middle">Field</text>
       </g>
 
-      <!-- Pulse dots (active only) -->
+      <!-- Pulse dots — always travelling -->
       <circle class="pulse-dot" r="4">
-        <animateMotion dur="9s" repeatCount="indefinite" path="M 150 360 Q 230 300 250 260"/>
+        <animateMotion dur="5s" repeatCount="indefinite" path="M 150 360 Q 230 300 250 260"/>
       </circle>
       <circle class="pulse-dot" r="4">
-        <animateMotion dur="9s" begin="3s" repeatCount="indefinite" path="M 250 260 Q 310 220 360 180"/>
+        <animateMotion dur="5s" begin="1.6s" repeatCount="indefinite" path="M 250 260 Q 310 220 360 180"/>
       </circle>
       <circle class="pulse-dot" r="4">
-        <animateMotion dur="9s" begin="6s" repeatCount="indefinite" path="M 360 180 Q 280 280 150 360"/>
+        <animateMotion dur="5s" begin="3.3s" repeatCount="indefinite" path="M 360 180 Q 280 280 150 360"/>
       </circle>
     </svg>
   </div>
@@ -1037,7 +1246,7 @@
       <div class="layer-head">Field</div>
       <h3 class="layer-title">
         <span class="lang-en-block">Agents embedded<br>where work happens.</span>
-        <span class="lang-ja-block">業務の真ん中で、<br>動くエージェント。</span>
+        <span class="lang-ja-block">消費を加速させ、<br>業務効率を劇的に改善する<br>エージェント。</span>
       </h3>
       <p class="layer-desc">
         <span class="lang-en">
@@ -1046,7 +1255,7 @@
         </span>
         <span class="lang-ja">
           小売、モビリティ、ホスピタリティ。それぞれの現場で、
-          事業の顔となるエージェントを、お客様と一緒につくる。
+          事業の顔となるエージェントを、お客様とともにつくります。
         </span>
       </p>
     </div>
@@ -1066,8 +1275,8 @@
         </span>
         <span class="lang-ja">
           業界をよく知る人間だからこそ設計できる、
-          エージェントネイティブの垂直SaaS。
-          プロダクトづくりの経験を、AI時代にアップデートする。
+          エージェントネイティブの垂直SaaSを開発しています。
+          プロダクトづくりの経験を、AI時代にアップデートしていきます。
         </span>
       </p>
     </div>
@@ -1087,7 +1296,7 @@
         </span>
         <span class="lang-ja">
           分断されたAPI、データ、規制。それらを超えて、
-          エージェントが安全に動作するための共通基盤を提供する。
+          エージェントが安全に動作するための共通基盤を提供します。
         </span>
       </p>
     </div>
@@ -1122,9 +1331,9 @@
             We do both, in that order.
           </span>
           <span class="lang-ja">
-            プロダクトのないインフラは、ただの仮説にすぎない。
-            インフラのないプロダクトは、広がらない。
-            わたしたちは両方を、順番を守って手がける。
+            プロダクトのないインフラは、ただの仮説にすぎません。
+            インフラのないプロダクトは、広がりません。
+            わたしたちは両方を、順番を守って手がけます。
           </span>
         </p>
       </div>
@@ -1142,7 +1351,7 @@
           </span>
           <span class="lang-ja">
             エージェントが呼び出すひとつひとつのリクエストは、
-            ユーザーとの関係そのものである。
+            ユーザーとの関係そのものです。
           </span>
         </p>
       </div>
@@ -1160,7 +1369,7 @@
           </span>
           <span class="lang-ja">
             過去にとらわれず、10年後の抽象化にも耐える部品を、
-            いま設計する。
+            いま設計します。
           </span>
         </p>
       </div>
@@ -1177,7 +1386,7 @@
             not what the brand claims.
           </span>
           <span class="lang-ja">
-            ブランドの主張ではなく、システムの挙動で伝える。
+            ブランドの主張ではなく、システムの挙動で伝えます。
           </span>
         </p>
       </div>
@@ -1203,9 +1412,9 @@
         consume them.
       </span>
       <span class="lang-ja">
-        少人数で、すべての層を手がける。
-        次のプラットフォームシフトは、エージェントのものだ。
-        それを使う側ではなく、つくる側に立つ。
+        少人数で、すべての層を手がけています。
+        次のプラットフォームシフトは、エージェントのものになる。
+        それを使う側ではなく、つくる側に立ちます。
       </span>
     </p>
     <div class="careers-list">
@@ -1262,7 +1471,16 @@
 <footer>
   <div class="footer-brand">Alzent<span class="accent">.</span></div>
   <div class="footer-meta">
-    Tokyo, Japan<br>
+    <div class="footer-facts">
+      <span class="footer-fact">
+        <span class="footer-fact-label">Headquarters</span>
+        <strong><span class="lang-en">Tokyo, Japan</span><span class="lang-ja">東京</span></strong>
+      </span>
+      <span class="footer-fact">
+        <span class="footer-fact-label">Founded</span>
+        <strong>2026</strong>
+      </span>
+    </div>
     <a href="mailto:info@alzent.ai">info@alzent.ai</a>
   </div>
   <div class="footer-copy">
@@ -1285,6 +1503,20 @@
     const saved = localStorage.getItem('alzent-lang');
     if (saved === 'ja') setLang('ja');
   } catch (e) {}
+
+  // Mobile menu toggle
+  const navEl = document.getElementById('nav');
+  const hamburger = document.getElementById('navHamburger');
+  function closeMenu() { navEl.classList.remove('menu-open'); }
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      navEl.classList.toggle('menu-open');
+    });
+  }
+  // Close on resize back to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 960) closeMenu();
+  });
 
   // Nav scroll effect
   const nav = document.getElementById('nav');
